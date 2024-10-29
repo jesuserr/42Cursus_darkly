@@ -34,6 +34,3 @@ Three basic strategies to solve this type of breach would be:
 
 - [.htaccess - Wikipedia](https://en.wikipedia.org/wiki/.htaccess)
 - [htpasswd - Manage user files for basic authentication - Apache HTTP Server Version 2.4](https://httpd.apache.org/docs/2.4/programs/htpasswd.html)
-
-
-
