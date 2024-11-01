@@ -3,6 +3,6 @@ Summary: This project is an introduction to cyber security in the field of the W
 
 Markdown in VS Code - Preview Markdown. Cmd+Shift+V (Mac) Ctrl+Shfit+V (Windows)
 
-Israel: SQL (2) / Spoof / Bruteforce
+Israel: SQL (2) / Spoof / Bruteforce / ~~Sql_Injection_member~~
 
 Jesus: XSS (2) / ~~Cookies~~ / File Upload
