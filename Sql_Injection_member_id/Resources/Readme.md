@@ -102,3 +102,21 @@
 6. Decrypting the Hash:
     
     Using an MD5 decrypter, we decrypt this hash to reveal: **FortyTwo**. By converting it to lowercase and hashing it with SHA-256, we obtain the final flag.
+
+## Prevent SQLi
+
+There are several methods that developers can implement in order to avoid sql injection:
+
+1. **Use prepared statements and parameterized queries:**
+    
+    Ensure that the user input is not directly inserted into SQL queries.
+    
+2. **Input validation an sanitization:**
+    
+    Limit user input to acceptable values, such as numbers, dates, and specific text formats.
+    
+    Sanitize input to remove or escape potentially dangerous characters(e.g., single quotes or semicolons).
+    
+3. Implement least privileges for database access:
+    
+    Configure the database user permissions so that they only have the minimum access necessary.
